@@ -6,7 +6,9 @@
 }
 
 body {
-  font-family: "Times New Roman", Times, serif;
+  /* font-family: "Nunito", sans-serif; */
+  font-family: "Cutive Mono", monospace;
+  front-weight: 900;
   font-size: 16px;
   line-height: 1.5;
   color: #000;
@@ -35,7 +37,7 @@ body {
 }
 
 .sidebar-header {
-  padding: 24px;
+  padding: 15px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 
@@ -300,7 +302,7 @@ textarea:focus {
   transition: background-color 0.4s ease, transform 0.2s ease;
 }
 
-.tag {
+/* .tag {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -309,13 +311,13 @@ textarea:focus {
   border-radius: 20px;
   background: #fff;
   cursor: default;
-  transition: background-color 0.3s ease;
-}
+  transition: background-color 0.3s ease, transform 0.4s;
+} */
 
 .tag-remove {
   background: transparent;
   border: none;
-  color: #888;
+  color: #c8c8c8;
   font-size: 14px;
   cursor: pointer;
   line-height: 1;
@@ -331,7 +333,8 @@ textarea:focus {
 }
 
 .tag.selected {
-  background-color: rgba(120, 196, 93, 0.1);
+  background-color: rgba(80, 99, 73, 0.9);
+  color: #ffedc7;
 }
 
 .tag-input-row {
@@ -370,7 +373,7 @@ textarea:focus {
 .tag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   padding: 6px 10px;
   border: 1px solid #ccc;
   border-radius: 20px;
@@ -381,7 +384,7 @@ textarea:focus {
 .tag-remove {
   background: transparent;
   border: none;
-  color: #888;
+  color: #c8c8c8;
   font-size: 14px;
   cursor: pointer;
   line-height: 1;
@@ -445,7 +448,7 @@ textarea:focus {
 
 /* Buttons */
 .btn-primary {
-  background-color: #dc2626;
+  background-color: #38a0ec;
   color: #fff;
   border: none;
   padding: 12px 32px;
@@ -458,9 +461,14 @@ textarea:focus {
 }
 
 .btn-primary:hover {
-  background-color: #b91c1c;
+  background-color: #3f51b5eb;
+  box-shadow: 0px 15px 25px -5px rgba(darken(dodgerblue, 40%));
+  transform: scale(1.03);
 }
-
+.btn-primary:active {
+  box-shadow: 0px 4px 8px rgba(darken(dodgerblue, 30%));
+  transform: scale(0.9);
+}
 .btn-outline {
   background-color: #fff;
   color: #000;
@@ -516,6 +524,10 @@ textarea:focus {
   align-items: center;
 }
 
+.seach-select {
+  width: 100%;
+}
+
 .search-container {
   flex: 1;
   position: relative;
@@ -526,7 +538,7 @@ textarea:focus {
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(0, 0, 0, 0.4);
+  /* color: rgba(0, 0, 0, 0.4); */
 }
 
 .search-input {
@@ -571,6 +583,16 @@ textarea:focus {
   border-color: #000;
 }
 
+.filter-select {
+  color: #888;
+  font-weight: 300; /* ตัวบาง จาง */
+}
+
+.filter-select:focus {
+  color: #000;
+  font-weight: 400; /* หนาปกติ */
+}
+
 /* Cards Library */
 .cards-library {
   padding: 24px;
@@ -605,12 +627,20 @@ textarea:focus {
   /* transform: scale(1.05); */
 }
 
+#tiny-quiz-card:hover {
+  transform: none;
+}
+
 .quiz-card-content {
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  transition: transform 0.3s ease;
 }
+/* .quiz-card-content:hover {
+  transform: scale(0.95);
+} */
 .quiz-card-name {
   font-size: 18px;
   font-weight: 500;
@@ -657,6 +687,10 @@ textarea:focus {
 .quiz-choice-type {
   color: rgba(0, 0, 0, 0.6);
   margin-top: 4px;
+  margin-right: 100px;
+  background-color: rgb(208, 202, 189);
+  border-radius: 30px;
+  padding-left: 15px;
 }
 
 .quiz-card-menu {
@@ -856,7 +890,6 @@ textarea:focus {
   padding: 24px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
-
 .question-counter {
   color: rgba(0, 0, 0, 0.7);
 }
@@ -1069,6 +1102,10 @@ textarea:focus {
     gap: 12px;
   }
 
+  .search-container {
+    width: 100%;
+  }
+
   .filter-container {
     width: 100%;
   }
@@ -1142,8 +1179,8 @@ textarea:focus {
 }
 
 .msg .avatar {
-  width: 28px;
-  height: 28px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.08);
   color: #000;
