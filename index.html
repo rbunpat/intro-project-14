@@ -1,366 +1,551 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Flashcards</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
     <div id="app" class="app">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h1>AI Flashcards</h1>
-            </div>
-            <nav class="sidebar-nav">
-                <button class="nav-item active" data-tab="home">
-                    <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                        <polyline points="9,22 9,12 15,12 15,22"/>
-                    </svg>
-                    <span>Home</span>
-                </button>
-                <button class="nav-item" data-tab="cards">
-                    <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
-                    </svg>
-                    <span>Cards Folder</span>
-                </button>
-                <button class="nav-item" data-tab="new-card">
-                    <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14"/>
-                        <path d="M12 5v14"/>
-                    </svg>
-                    <span>New Card</span>
-                </button>
-                <button class="nav-item" data-tab="asks">
-                    <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    </svg>
-                    <span>Asks</span>
-                </button>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Header -->
-            <header class="header">
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="4" x2="20" y1="6" y2="6"/>
-                        <line x1="4" x2="20" y1="12" y2="12"/>
-                        <line x1="4" x2="20" y1="18" y2="18"/>
-                    </svg>
-                </button>
-                <h2 id="pageTitle">Home</h2>
-            </header>
-
-            <!-- Content Area -->
-            <main class="content">
-                <!-- Home Page - Quiz Creator -->
-                <div id="home-content" class="page-content active">
-                    <div class="quiz-creator">
-                        <div class="quiz-header">
-                            <input type="text" id="quizName" placeholder="Enter quiz name" class="quiz-name-input">
-                            
-                            <!-- Quick Settings Row -->
-                            <div class="quick-settings">
-                                <div class="setting-group">
-                                    <label>
-                                        <svg class="setting-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <polyline points="12,6 12,12 16,14"/>
-                                        </svg>
-                                        Quiz Duration
-                                    </label>
-                                    <select id="duration" class="select-input">
-                                        <option value="">Select duration</option>
-                                        <option value="5">5 minutes</option>
-                                        <option value="10">10 minutes</option>
-                                        <option value="15">15 minutes</option>
-                                        <option value="30">30 minutes</option>
-                                        <option value="60">60 minutes</option>
-                                        <option value="unlimited">Unlimited</option>
-                                    </select>
-                                </div>
-
-                                <div class="setting-group">
-                                    <label>
-                                        <svg class="setting-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <line x1="4" x2="4" y1="21" y2="14"/>
-                                            <line x1="4" x2="4" y1="10" y2="3"/>
-                                            <line x1="12" x2="12" y1="21" y2="12"/>
-                                            <line x1="12" x2="12" y1="8" y2="3"/>
-                                            <line x1="20" x2="20" y1="21" y2="16"/>
-                                            <line x1="20" x2="20" y1="12" y2="3"/>
-                                        </svg>
-                                        Questions
-                                    </label>
-                                    <select id="numQuestions" class="select-input">
-                                        <option value="">Select number</option>
-                                        <option value="5">5 questions</option>
-                                        <option value="10">10 questions</option>
-                                        <option value="15">15 questions</option>
-                                        <option value="20">20 questions</option>
-                                        <option value="25">25 questions</option>
-                                        <option value="50">50 questions</option>
-                                    </select>
-                                </div>
-
-                                <div class="setting-group">
-                                    <label>
-                                        <svg class="setting-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <line x1="8" x2="21" y1="6" y2="6"/>
-                                            <line x1="8" x2="21" y1="12" y2="12"/>
-                                            <line x1="8" x2="21" y1="18" y2="18"/>
-                                            <line x1="3" x2="3.01" y1="6" y2="6"/>
-                                            <line x1="3" x2="3.01" y1="12" y2="12"/>
-                                            <line x1="3" x2="3.01" y1="18" y2="18"/>
-                                        </svg>
-                                        Choice Type
-                                    </label>
-                                    <select id="choiceType" class="select-input">
-                                        <option value="">Select type</option>
-                                        <option value="multiple">Multiple Choice</option>
-                                        <option value="true-false">True/False</option>
-                                        <option value="short-answer">Short Answer</option>
-                                        <option value="essay">Essay</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Main Content Area -->
-                        <div class="creator-content">
-                            <!-- Quiz Configuration Card -->
-                            <div class="config-card">
-                                <div class="card-header">
-                                    <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="3"/>
-                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                                    </svg>
-                                    <h3>Quiz Configuration</h3>
-                                </div>
-                                <div class="card-content">
-                                    <div class="form-group">
-                                        <label for="quizDetails">Quiz Details</label>
-                                        <textarea id="quizDetails" placeholder="Enter quiz description and instructions" rows="4"></textarea>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Tags</label>
-                                        <div class="tags-container" id="tagsContainer">
-                                            <!-- Tags will be populated by JavaScript -->
-                                        </div>
-                                        <div class="tag-input-row">
-                                            <input type="text" id="newTag" placeholder="Add custom tag" class="tag-input">
-                                            <button type="button" id="addTagBtn" class="add-tag-btn">
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M5 12h14"/>
-                                                    <path d="M12 5v14"/>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Data Import Card -->
-                            <div class="import-card">
-                                <div class="card-header">
-                                    <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <ellipse cx="12" cy="5" rx="9" ry="3"/>
-                                        <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/>
-                                        <path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/>
-                                    </svg>
-                                    <h3>Data Import</h3>
-                                </div>
-                                <div class="card-content">
-                                    <div class="import-area">
-                                        <div class="import-icons">
-                                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                                <polyline points="7,10 12,15 17,10"/>
-                                                <line x1="12" x2="12" y1="15" y2="3"/>
-                                            </svg>
-                                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                                <polyline points="14,2 14,8 20,8"/>
-                                                <line x1="16" x2="8" y1="13" y2="13"/>
-                                                <line x1="16" x2="8" y1="17" y2="17"/>
-                                                <polyline points="10,9 9,9 8,9"/>
-                                            </svg>
-                                        </div>
-                                        <h3>Import your content</h3>
-                                        <p>Upload documents, text files, or paste content to generate flashcards</p>
-                                        <div class="import-buttons">
-                                            <button type="button" class="btn-outline">
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                                    <polyline points="7,10 12,15 17,10"/>
-                                                    <line x1="12" x2="12" y1="15" y2="3"/>
-                                                </svg>
-                                                Upload File
-                                            </button>
-                                            <button type="button" class="btn-outline">
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                                    <polyline points="14,2 14,8 20,8"/>
-                                                </svg>
-                                                Paste Text
-                                            </button>
-                                        </div>
-                                        <p class="supported-formats">Supported formats: PDF, DOCX, TXT, MD</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Create Button -->
-                        <div class="creator-footer">
-                            <button type="button" id="createQuizBtn" class="btn-primary">Create Quiz</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cards Folder Page -->
-                <div id="cards-content" class="page-content">
-                    <div class="cards-header">
-                        <div class="search-filter-bar">
-                            <div class="search-container">
-                                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="11" cy="11" r="8"/>
-                                    <path d="m21 21-4.35-4.35"/>
-                                </svg>
-                                <input type="text" id="searchInput" placeholder="Search quizzes or tags..." class="search-input">
-                            </div>
-                            <div class="filter-container">
-                                <svg class="filter-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>
-                                </svg>
-                                <select id="filterSelect" class="filter-select">
-                                    <option value="">Filter by...</option>
-                                    <option value="all">All Quizzes</option>
-                                    <option value="high-score">High Score (80+)</option>
-                                    <option value="recent">Recently Created</option>
-                                    <option value="multiple-choice">Multiple Choice</option>
-                                    <option value="short-answer">Short Answer</option>
-                                    <option value="essay">Essay</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="cards-library">
-                        <h2>Quiz Library</h2>
-                        <div id="quizCardsContainer" class="quiz-cards-grid">
-                            <!-- Quiz cards will be populated by JavaScript -->
-                        </div>
-                        <div id="noQuizzesMessage" class="no-results" style="display: none;">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                <polyline points="14,2 14,8 20,8"/>
-                            </svg>
-                            <p>No quizzes found matching your search</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quiz Taking Page -->
-                <div id="quiz-taking-content" class="page-content">
-                    <div class="quiz-taking-container">
-                        <div class="quiz-header-section">
-                            <button id="backToCardsBtn" class="back-btn">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="m15 18-6-6 6-6"/>
-                                </svg>
-                            </button>
-                            <div class="quiz-info">
-                                <h1 id="quizTitle">Quiz Title</h1>
-                                <div class="quiz-meta">
-                                    <div class="meta-item">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <circle cx="12" cy="12" r="6"/>
-                                            <circle cx="12" cy="12" r="2"/>
-                                        </svg>
-                                        <span id="quizDifficulty">Intermediate</span>
-                                    </div>
-                                    <div class="meta-item">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <line x1="8" x2="21" y1="6" y2="6"/>
-                                            <line x1="8" x2="21" y1="12" y2="12"/>
-                                            <line x1="8" x2="21" y1="18" y2="18"/>
-                                        </svg>
-                                        <span id="quizChoiceType">Multiple Choice</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="quiz-card">
-                            <div class="quiz-progress-header">
-                                <div class="question-counter">
-                                    <span>Question <span id="currentQuestionNum">1</span> of <span id="totalQuestions">25</span></span>
-                                </div>
-                                <div class="timer">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="10"/>
-                                        <polyline points="12,6 12,12 16,14"/>
-                                    </svg>
-                                    <span id="timeRemaining">30:00</span>
-                                </div>
-                            </div>
-
-                            <div class="progress-bar">
-                                <div id="progressFill" class="progress-fill" style="width: 4%"></div>
-                            </div>
-
-                            <div class="question-section">
-                                <div class="question-container">
-                                    <h2 id="questionText">What is the output of the following JavaScript code: console.log(typeof typeof 1)?</h2>
-                                    <div id="answersContainer" class="answers-container">
-                                        <!-- Answer options will be populated by JavaScript -->
-                                    </div>
-                                </div>
-
-                                <div class="navigation-buttons">
-                                    <button id="prevBtn" class="btn-outline" disabled>Previous</button>
-                                    <div class="nav-right">
-                                        <button id="nextBtn" class="btn-primary">Next Question</button>
-                                        <button id="submitBtn" class="btn-success" style="display: none;">Submit Quiz</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Placeholder Pages -->
-                <div id="new-card-content" class="page-content">
-                    <div class="placeholder-content">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14"/>
-                            <path d="M12 5v14"/>
-                        </svg>
-                        <p>New card creation coming soon</p>
-                    </div>
-                </div>
-
-                <div id="asks-content" class="page-content">
-                    <div class="placeholder-content">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                        </svg>
-                        <p>Asks feature coming soon</p>
-                    </div>
-                </div>
-            </main>
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <h1>AI Flashcards</h1>
         </div>
+        <nav class="sidebar-nav">
+          <button class="nav-item active" data-tab="home">
+            <svg
+              class="nav-icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9,22 9,12 15,12 15,22" />
+            </svg>
+            <span>Home</span>
+          </button>
+          <button class="nav-item" data-tab="cards">
+            <svg
+              class="nav-icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"
+              />
+            </svg>
+            <span>Cards Folder</span>
+          </button>
+          <button class="nav-item" data-tab="asks">
+            <svg
+              class="nav-icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              />
+            </svg>
+            <span>Asks</span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="4" x2="20" y1="6" y2="6" />
+              <line x1="4" x2="20" y1="12" y2="12" />
+              <line x1="4" x2="20" y1="18" y2="18" />
+            </svg>
+          </button>
+          <h2 id="pageTitle">Home</h2>
+        </header>
+
+        <!-- Content Area -->
+        <main class="content">
+          <!-- Home Page - Quiz Creator -->
+          <div id="home-content" class="page-content active">
+            <div class="quiz-creator">
+              <div class="quiz-header">
+                <input
+                  type="text"
+                  id="quizName"
+                  placeholder="Enter quiz name"
+                  class="quiz-name-input"
+                />
+
+                <!-- Quick Settings Row -->
+                <div class="quick-settings">
+                  <div class="setting-group">
+                    <label>
+                      <svg
+                        class="setting-icon"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12,6 12,12 16,14" />
+                      </svg>
+                      Quiz Duration
+                    </label>
+                    <select id="duration" class="select-input">
+                      <option value="">Select duration</option>
+                      <option value="5">5 minutes</option>
+                      <option value="10">10 minutes</option>
+                      <option value="15">15 minutes</option>
+                      <option value="30">30 minutes</option>
+                      <option value="60">60 minutes</option>
+                      <option value="unlimited">Unlimited</option>
+                    </select>
+                  </div>
+
+                  <div class="setting-group">
+                    <label>
+                      <svg
+                        class="setting-icon"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <line x1="4" x2="4" y1="21" y2="14" />
+                        <line x1="4" x2="4" y1="10" y2="3" />
+                        <line x1="12" x2="12" y1="21" y2="12" />
+                        <line x1="12" x2="12" y1="8" y2="3" />
+                        <line x1="20" x2="20" y1="21" y2="16" />
+                        <line x1="20" x2="20" y1="12" y2="3" />
+                      </svg>
+                      Questions
+                    </label>
+                    <select id="numQuestions" class="select-input">
+                      <option value="">Select number</option>
+                      <option value="5">5 questions</option>
+                      <option value="10">10 questions</option>
+                      <option value="15">15 questions</option>
+                      <option value="20">20 questions</option>
+                      <option value="25">25 questions</option>
+                      <option value="50">50 questions</option>
+                    </select>
+                  </div>
+
+                  <div class="setting-group">
+                    <label>
+                      <svg
+                        class="setting-icon"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <line x1="8" x2="21" y1="6" y2="6" />
+                        <line x1="8" x2="21" y1="12" y2="12" />
+                        <line x1="8" x2="21" y1="18" y2="18" />
+                        <line x1="3" x2="3.01" y1="6" y2="6" />
+                        <line x1="3" x2="3.01" y1="12" y2="12" />
+                        <line x1="3" x2="3.01" y1="18" y2="18" />
+                      </svg>
+                      Choice Type
+                    </label>
+                    <select id="choiceType" class="select-input">
+                      <option value="">Select type</option>
+                      <option value="multiple">Multiple Choice</option>
+                      <option value="true-false">True/False</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Main Content Area -->
+              <div class="creator-content">
+                <!-- Quiz Configuration Card -->
+                <div class="config-card">
+                  <div class="card-header">
+                    <svg
+                      class="card-icon"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <circle cx="12" cy="12" r="3" />
+                      <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+                      />
+                    </svg>
+                    <h3>Quiz Configuration</h3>
+                  </div>
+                  <div class="card-content">
+                    <div class="form-group">
+                      <label for="quizDetails">Quiz Details</label>
+                      <textarea
+                        id="quizDetails"
+                        placeholder="Enter quiz description and instructions"
+                        rows="4"
+                      ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Tags</label>
+                      <div class="tags-container" id="tagsContainer">
+                        <!-- Tags will be populated by JavaScript -->
+                      </div>
+                      <div class="tag-input-row">
+                        <input
+                          type="text"
+                          id="newTag"
+                          placeholder="Add custom tag"
+                          class="tag-input"
+                        />
+                        <button
+                          type="button"
+                          id="addTagBtn"
+                          class="add-tag-btn"
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          >
+                            <path d="M5 12h14" />
+                            <path d="M12 5v14" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Create Button -->
+              <div class="creator-footer">
+                <button type="button" id="createQuizBtn" class="btn-primary">
+                  Create Quiz
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cards Folder Page -->
+          <div id="cards-content" class="page-content">
+            <div class="cards-header">
+              <div class="search-filter-bar">
+                <div class="search-container">
+                  <svg
+                    class="search-icon"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                  </svg>
+                  <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search quizzes or tags..."
+                    class="search-input"
+                  />
+                </div>
+                <div class="filter-container">
+                  <svg
+                    class="filter-icon"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46" />
+                  </svg>
+                  <select id="filterSelect" class="filter-select">
+                    <option value="">Filter by...</option>
+                    <option value="all">All Quizzes</option>
+                    <option value="high-score">High Score (80+)</option>
+                    <option value="recent">Recently Created</option>
+                    <option value="multiple-choice">Multiple Choice</option>
+                    <!-- <option value="short-answer">Short Answer</option>
+                    <option value="essay">Essay</option> -->
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="cards-library">
+              <h2>Quiz Library</h2>
+              <div id="quizCardsContainer" class="quiz-cards-grid">
+                <!-- Quiz cards will be populated by JavaScript -->
+              </div>
+              <div
+                id="noQuizzesMessage"
+                class="no-results"
+                style="display: none"
+              >
+                <svg
+                  width="64"
+                  height="64"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                  />
+                  <polyline points="14,2 14,8 20,8" />
+                </svg>
+                <p>No quizzes found matching your search</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quiz Taking Page -->
+          <div id="quiz-taking-content" class="page-content">
+            <div class="quiz-taking-container">
+              <div class="quiz-header-section">
+                <button id="backToCardsBtn" class="back-btn">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                </button>
+                <div class="quiz-info">
+                  <h1 id="quizTitle">Quiz Title</h1>
+                  <div class="quiz-meta">
+                    <!-- <div class="meta-item">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <circle cx="12" cy="12" r="6" />
+                        <circle cx="12" cy="12" r="2" />
+                      </svg>
+                      <span id="quizDifficulty">Intermediate</span>
+                    </div> -->
+                    <div class="meta-item">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <line x1="8" x2="21" y1="6" y2="6" />
+                        <line x1="8" x2="21" y1="12" y2="12" />
+                        <line x1="8" x2="21" y1="18" y2="18" />
+                      </svg>
+                      <span id="quizChoiceType">Multiple Choice</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="quiz-card">
+                <div class="quiz-progress-header">
+                  <div class="question-counter">
+                    <span
+                      >Question <span id="currentQuestionNum">1</span> of
+                      <span id="totalQuestions">25</span></span
+                    >
+                  </div>
+                  <div class="timer">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12,6 12,12 16,14" />
+                    </svg>
+                    <span id="timeRemaining">30:00</span>
+                  </div>
+                </div>
+
+                <div class="progress-bar">
+                  <div
+                    id="progressFill"
+                    class="progress-fill"
+                    style="width: 4%"
+                  ></div>
+                </div>
+
+                <div class="question-section">
+                  <div class="question-container">
+                    <h2 id="questionText">
+                      What is the output of the following JavaScript code:
+                      console.log(typeof typeof 1)?
+                    </h2>
+                    <div id="answersContainer" class="answers-container">
+                      <!-- Answer options will be populated by JavaScript -->
+                    </div>
+                  </div>
+
+                  <div class="navigation-buttons">
+                    <button id="prevBtn" class="btn-outline" disabled>
+                      Previous
+                    </button>
+                    <div class="nav-right">
+                      <button id="nextBtn" class="btn-primary">
+                        Next Question
+                      </button>
+                      <button
+                        id="submitBtn"
+                        class="btn-success"
+                        style="display: none"
+                      >
+                        Submit Quiz
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quiz Edit Page (hidden tab) -->
+          <div id="quiz-edit-content" class="page-content">
+            <div class="quiz-creator">
+              <div class="quiz-header">
+                <h2>Edit Quiz</h2>
+              </div>
+              <div class="creator-content">
+                <div class="config-card">
+                  <div class="card-header">
+                    <h3>Edit Quiz Details</h3>
+                  </div>
+                  <div class="card-content">
+                    <div class="form-group">
+                      <label for="editQuizName">Quiz Name</label>
+                      <input id="editQuizName" type="text" class="tag-input" />
+                    </div>
+                    <div class="form-group">
+                      <label for="editDuration">Duration (minutes)</label>
+                      <input
+                        id="editDuration"
+                        type="number"
+                        class="tag-input"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="editTotalQuestions">Total Questions</label>
+                      <input
+                        id="editTotalQuestions"
+                        type="number"
+                        class="tag-input"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="editChoiceType">Choice Type</label>
+                      <select id="editChoiceType" class="select-input">
+                        <option value="Multiple Choice">Multiple Choice</option>
+                        <!-- <option value="Short Answer">Short Answer</option>
+                        <option value="Essay">Essay</option> -->
+                        <option value="True/False">True/False</option>
+                      </select>
+                    </div>
+                    <div class="navigation-buttons">
+                      <button id="cancelEditBtn" class="btn-outline">
+                        Cancel
+                      </button>
+                      <div class="nav-right">
+                        <button id="saveEditBtn" class="btn-success">
+                          Save Changes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Asks Page -->
+          <div id="asks-content" class="page-content">
+            <div class="chat-wrap">
+              <div class="chat-messages" id="chatMessages">
+                <!-- example starter -->
+                <div class="msg assistant">
+                  <div class="avatar">AI</div>
+                  <div class="bubble">
+                    สวัสดีครับ 👋 อยากให้ผมช่วยเรื่องอะไรดีครับ?
+                  </div>
+                </div>
+              </div>
+
+              <div class="chat-inputbar">
+                <textarea
+                  id="chatInput"
+                  rows="1"
+                  placeholder="Ask anything"
+                ></textarea>
+                <div class="chat-actions">
+                  <button id="chatSendBtn" class="btn-primary">Send</button>
+                  <!-- <button id="chatMicBtn" class="btn-icon" title="Voice (todo)">
+                    
+                  </button> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
