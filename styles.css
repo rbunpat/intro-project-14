@@ -7,12 +7,16 @@
 
 body {
   /* font-family: "Nunito", sans-serif; */
-  font-family: "Cutive Mono", monospace;
-  front-weight: 900;
+
+  /* font-family: "Cutive Mono", monospace; */
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-style: normal;
+
   font-size: 16px;
   line-height: 1.5;
   color: #000;
-  background-color: #fff;
+  background-color: #fff8e8;
 }
 
 /* Main App Layout */
@@ -24,7 +28,8 @@ body {
 /* Sidebar */
 .sidebar {
   width: 280px;
-  background-color: #fff;
+  background-color: #fff8e8;
+  /* background-image: linear-gradient(#fff8e8, #f7eed3); */
   border-right: 1px solid rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
@@ -63,7 +68,7 @@ body {
   border: none;
   cursor: pointer;
   border-radius: 6px;
-  color: #000;
+  color: #4d3c34;
   font-family: inherit;
   font-size: 16px;
   text-align: left;
@@ -71,12 +76,13 @@ body {
 }
 
 .nav-item:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgb(170, 179, 150, 0.3);
   transform: scale(1.05);
 }
 
 .nav-item.active {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgb(170, 179, 150, 0.8);
+  box-shadow: 5px 5px 5px rgb(230, 221, 195);
 }
 
 .nav-icon {
@@ -99,7 +105,7 @@ body {
   align-items: center;
   padding: 16px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-  background-color: rgba(186, 219, 190, 0.4);
+  background-color: #aab396;
 }
 
 .sidebar-toggle {
@@ -120,7 +126,7 @@ body {
 
 .content {
   flex: 1;
-  background-color: #fff;
+  background-color: #fff8e8;
 }
 
 /* Page Content */
@@ -147,6 +153,19 @@ body {
   flex-direction: column;
   gap: 24px;
 }
+.input-icon {
+  position: relative;
+  display: inline-block;
+}
+
+.input-icon i {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  font-size: 20px;
+  transform: translateY(-50%);
+  color: rgb(103, 70, 54, 0.6);
+}
 
 .quiz-name-input {
   width: 100%;
@@ -157,6 +176,9 @@ body {
   border: none;
   outline: none;
   font-family: inherit;
+  padding-left: 40px; /* เว้นที่ให้ icon */
+  margin: auto;
+  height: 36px;
 }
 
 .quiz-name-input::placeholder {
@@ -231,7 +253,7 @@ body {
   gap: 8px;
   padding: 24px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-  background-color: rgba(186, 219, 190, 0.4);
+  background-color: #aab396;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
 }
@@ -448,8 +470,8 @@ textarea:focus {
 
 /* Buttons */
 .btn-primary {
-  background-color: #38a0ec;
-  color: #fff;
+  background-color: #b53a3a;
+  color: #fff8e8;
   border: none;
   padding: 12px 32px;
   border-radius: 6px;
@@ -457,13 +479,34 @@ textarea:focus {
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  /* transition: background-color 0.2s ease, border-radius 0.2s ease-in-out; */
+  transition: all 200ms;
+  z-index: 1;
+  position: relative;
+  overflow: hidden;
 }
-
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  height: 100%;
+  border-radius: 30px;
+  background-color: #fff8e8;
+  z-index: -1;
+  transition: all 200ms;
+  top: 0;
+  left: 0;
+  width: 0;
+}
 .btn-primary:hover {
-  background-color: #3f51b5eb;
+  /* background-color: #fff8e8; */
+  color: #b53a3a;
+  border-radius: 30px;
+  border: 1px solid #b53a3a;
   box-shadow: 0px 15px 25px -5px rgba(darken(dodgerblue, 40%));
   transform: scale(1.03);
+}
+.btn-primary:hover::before {
+  width: 100%;
 }
 .btn-primary:active {
   box-shadow: 0px 4px 8px rgba(darken(dodgerblue, 30%));
@@ -608,7 +651,7 @@ textarea:focus {
 
 .quiz-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
 }
 
@@ -669,7 +712,7 @@ textarea:focus {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  font-size: 14px;
+  font-size: 12px;
   color: rgba(0, 0, 0, 0.7);
 }
 
@@ -685,12 +728,13 @@ textarea:focus {
 }
 
 .quiz-choice-type {
+  display: inline-block;
   color: rgba(0, 0, 0, 0.6);
   margin-top: 4px;
-  margin-right: 100px;
+  margin-bottom: 30px;
   background-color: rgb(208, 202, 189);
   border-radius: 30px;
-  padding-left: 15px;
+  padding: 6px 20px;
 }
 
 .quiz-card-menu {
@@ -785,7 +829,7 @@ textarea:focus {
   right: 12px;
   width: 40px;
   height: 40px;
-  background-color: #22c55e;
+  background-color: #aab396;
   border: none;
   border-radius: 50%;
   color: #fff;
@@ -936,7 +980,7 @@ textarea:focus {
 }
 
 .question-container {
-  background-color: #f9fafb;
+  background-color: rgb(255, 248, 232, 0.3);
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   padding: 32px;
@@ -945,7 +989,7 @@ textarea:focus {
 
 #questionText {
   font-size: 20px;
-  color: #000;
+  color: #674636;
   margin-bottom: 24px;
   line-height: 1.4;
 }
@@ -977,7 +1021,7 @@ textarea:focus {
 }
 
 .answer-option.selected {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgb(170, 179, 150, 0.5);
   border-color: rgba(0, 0, 0, 0.4);
 }
 
@@ -1068,6 +1112,20 @@ textarea:focus {
   }
 }
 
+@media (max-width: 900px) {
+  .creator-content {
+    grid-template-columns: 1fr;
+  }
+
+  /* .quick-settings {
+    grid-template-columns: 1fr;
+  } */
+
+  .quiz-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
@@ -1152,7 +1210,7 @@ textarea:focus {
 
 /* ===== Asks Chat ===== */
 .chat-wrap {
-  height: 100%;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   padding: 16px;
@@ -1161,7 +1219,8 @@ textarea:focus {
 }
 
 .chat-messages {
-  flex: 1;
+  flex: 1 1 auto;
+  overflow-y: auto;
   overflow: auto;
   padding: 8px 4px;
   display: flex;
@@ -1176,6 +1235,9 @@ textarea:focus {
   display: flex;
   gap: 10px;
   max-width: 900px;
+  font-family: "Noto Sans Thai", sans-serif;
+  font-weight: 300;
+  font-style: normal;
 }
 
 .msg .avatar {
@@ -1206,9 +1268,9 @@ textarea:focus {
 }
 
 .msg.user .bubble {
-  background: #0b93f6;
+  background: #aab396;
   color: #fff;
-  border-color: #0b93f6;
+  border-color: #aab396;
 }
 
 .chat-inputbar {
@@ -1219,6 +1281,7 @@ textarea:focus {
   border-radius: 12px;
   padding: 10px;
   background: #fff;
+  flex: 0 0 auto;
 }
 
 #chatInput {
@@ -1226,7 +1289,8 @@ textarea:focus {
   border: none;
   outline: none;
   resize: none;
-  font-family: inherit;
+  font-family: "Noto Sans Thai", "Cutive Mono", sans-serif;
+  /* inherit; */
   font-size: 16px;
   color: #000;
   max-height: 200px;

@@ -62,14 +62,14 @@ const quizData = {
             {
                 id: "q1",
                 question: "What is the output of the following JavaScript code: console.log(typeof typeof 1)?",
-                type: "multiple",
+                type: "multiple-choice",
                 options: ["number", "string", "undefined", "object"],
                 correctAnswer: "string"
             },
             {
                 id: "q2",
                 question: "Which method is used to add an element to the end of an array in JavaScript?",
-                type: "multiple",
+                type: "multiple-choice",
                 options: ["push()", "pop()", "shift()", "unshift()"],
                 correctAnswer: "push()"
             }
@@ -86,7 +86,7 @@ const quizData = {
             {
                 id: "q1",
                 question: "In which year did World War II end?",
-                type: "multiple",
+                type: "multiple-choice",
                 options: ["1944", "1945", "1946", "1947"],
                 correctAnswer: "1945"
             },
@@ -152,8 +152,60 @@ function initializeApp() {
     setupEventListeners();
     initializeTags();
     renderQuizCards();
-    showPage('home');
     initAsksChat();
+
+    const savedTab = localStorage.getItem("currentTab");
+    if (savedTab) {
+        switchTab(savedTab);
+    } else {
+        showPage('home'); // default
+    }
+
+}
+
+window.createQuizApi = async function (payload) {
+    try {
+        const res = await fetch("https://cedt-backend-dev.rachatat.com/quiz/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || res.statusText);
+
+        //console.log("Quiz created:", data);
+        //alert("Quiz created successfully!");
+        //document.getElementById("quizForm")?.reset?.();
+    } catch (err) {
+        console.error("Error creating quiz:", err);
+        alert("สร้างควิซไม่สำเร็จ: " + err.message);
+    }
+};
+
+function handleCreateQuizClick() {
+    const title = document.getElementById("quizName")?.value?.trim();
+    const description = document.getElementById("quizDetails")?.value?.trim();
+    const numQuestions = parseInt(document.getElementById("numQuestions")?.value, 10);
+    const questionType = document.getElementById("choiceType")?.value; // "multiple" หรือ "true-false"
+    let duration = document.getElementById("duration")?.value;
+
+    if (typeof editMode !== "undefined" && editMode && currentQuizId) {
+        return createQuiz();
+    }
+
+
+    if (!title || !description || !numQuestions || !questionType || !duration) {
+        alert("กรอกให้ครบ: ชื่อหัวข้อ/จำนวนข้อ/ประเภทคำถาม");
+        return;
+    }
+
+    if (duration === "unlimited") {
+        duration = 0
+    }
+
+
+    window.createQuizApi({ title, description, numQuestions, questionType, duration });
 }
 
 function setupEventListeners() {
@@ -205,7 +257,7 @@ function setupEventListeners() {
             }
         });
     }
-    if (createQuizBtn) createQuizBtn.addEventListener('click', createQuiz);
+    if (createQuizBtn) createQuizBtn.addEventListener('click', handleCreateQuizClick);
 
     // Search and filter
     const searchInput = document.getElementById('searchInput');
@@ -285,6 +337,31 @@ function initAsksChat() {
         el.style.height = Math.min(el.scrollHeight, 200) + 'px';
     }
 }
+function scrollToBottom() {
+    const msgs = document.getElementById('chatMessages');
+    if (!msgs) return;
+
+    // ถ้า #chatMessages เป็น scrollable container ให้เลื่อนอันนี้
+    const style = window.getComputedStyle(msgs);
+    const isScrollable = style.overflowY === 'auto' || style.overflowY === 'scroll' || msgs.scrollHeight > msgs.clientHeight;
+
+    if (isScrollable) {
+        // ให้เกิดการเลื่อนหลังจาก layout เสร็จ (more reliable)
+        requestAnimationFrame(() => {
+            msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' });
+        });
+        return;
+    }
+
+    // Fallback: ถ้า container ไม่ scroll ให้เลื่อน message ตัวสุดท้าย ให้แน่ใจว่า visible
+    const last = msgs.lastElementChild;
+    if (last) {
+        last.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    } else {
+        // สุดท้ายก็เลื่อนหน้าเว็บทั้งหน้า
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+}
 
 function appendMessage(role, text) {
     const msgs = document.getElementById('chatMessages');
@@ -305,8 +382,8 @@ function appendMessage(role, text) {
     wrap.appendChild(bubble);
     msgs.appendChild(wrap);
 
-    // scroll to bottom
-    msgs.scrollTop = msgs.scrollHeight;
+    // เรียก scroll แบบปลอดภัย
+    scrollToBottom();
 }
 
 // typing indicator (assistant)
@@ -321,12 +398,16 @@ function showTyping() {
     <div class="bubble">กำลังพิมพ์…</div>
   `;
     msgs.appendChild(typingEl);
-    msgs.scrollTop = msgs.scrollHeight;
+
+    // เลื่อนให้เห็น typing
+    scrollToBottom();
 }
 function hideTyping() {
     if (typingEl && typingEl.parentNode) {
         typingEl.parentNode.removeChild(typingEl);
         typingEl = null;
+        // หลังจากลบแล้วอาจต้องเลื่อนให้ข้อความก่อนหน้า visible
+        requestAnimationFrame(scrollToBottom);
     }
 }
 
@@ -360,6 +441,8 @@ function mapHomeSelectToChoice(val) {
 
 function switchTab(tab) {
     currentTab = tab;
+
+    localStorage.setItem("currentTab", tab);
 
     // Update navigation
     document.querySelectorAll('.nav-item').forEach(item => {
@@ -822,7 +905,7 @@ function displayQuestion() {
     // Get current answer
     selectedAnswer = userAnswers[question.id] || '';
 
-    if (question.type === 'multiple') {
+    if (question.type === 'multiple-choice') {
         question.options.forEach((option, index) => {
             // multiple
             const button = document.createElement('button');
@@ -915,7 +998,7 @@ function selectAnswer(answer) {
     userAnswers[question.id] = answer;
 
     // Update visual selection for multiple choice
-    if (question.type === 'multiple' || question.type === 'true-false') {
+    if (question.type === 'multiple-choice' || question.type === 'true-false') {
         // จำกัดขอบเขตแค่คำถามปัจจุบัน
         const container = document.getElementById('answersContainer');
         const opts = container.querySelectorAll('.answer-option');
@@ -1080,3 +1163,36 @@ function saveQuizEdits() {
     renderQuizCards();
     switchTab('cards');
 }
+
+async function createQuiz(payload) {
+    try {
+        const res = await fetch("http://localhost:5000/quiz/generate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        console.log("Quiz created:", data);
+        alert("Quiz created successfully!");
+    } catch (error) {
+        console.error("Error creating quiz:", error);
+        alert("Failed to create quiz");
+    }
+}
+
+// document.getElementById("createQuizBtn")?.addEventListener("click", () => {
+//     const topic = document.getElementById("quizName").value.trim();
+//     const numQuestions = parseInt(document.getElementById("numQuestions").value, 10);
+//     const questionType = document.getElementById("choiceType").value;
+
+//     if (!topic || !numQuestions || !questionType) {
+//         alert("กรอกให้ครบ: ชื่อหัวข้อ/จำนวนข้อ/ประเภทคำถาม");
+//         return;
+//     }
+
+
+//     // createQuizApi({ topic, numQuestions, questionType });
+// });

@@ -3,13 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>📚 AI Flashcards</title>
+    <title>AI Flashcards</title>
+    <link
+      rel="icon"
+      href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><text y=".9em" font-size="96">📚</text></svg>'
+    />
+    <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
     <link rel="stylesheet" href="styles.css" />
     <!--font-->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Cutive+Mono&family=Noto+Sans+Thai:wght@100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- icon -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       rel="stylesheet"
     />
   </head>
@@ -98,12 +108,15 @@
           <div id="home-content" class="page-content active">
             <div class="quiz-creator">
               <div class="quiz-header">
-                <input
-                  type="text"
-                  id="quizName"
-                  placeholder="Enter quiz name"
-                  class="quiz-name-input"
-                />
+                <div class="input-icon">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                  <input
+                    type="text"
+                    id="quizName"
+                    placeholder="Enter quiz name"
+                    class="quiz-name-input"
+                  />
+                </div>
 
                 <!-- Quick Settings Row -->
                 <div class="quick-settings">
@@ -124,7 +137,9 @@
                       Quiz Duration
                     </label>
                     <select id="duration" class="select-input">
-                      <option value="">Select duration</option>
+                      <option value="" disabled selected hidden>
+                        Select duration
+                      </option>
                       <option value="5">5 minutes</option>
                       <option value="10">10 minutes</option>
                       <option value="15">15 minutes</option>
@@ -155,7 +170,9 @@
                       Questions
                     </label>
                     <select id="numQuestions" class="select-input">
-                      <option value="">Select number</option>
+                      <option value="" disabled selected hidden>
+                        Select number
+                      </option>
                       <option value="5">5 questions</option>
                       <option value="10">10 questions</option>
                       <option value="15">15 questions</option>
@@ -186,7 +203,9 @@
                       Choice Type
                     </label>
                     <select id="choiceType" class="select-input">
-                      <option value="">Select type</option>
+                      <option value="" disabled selected hidden>
+                        Select type
+                      </option>
                       <option value="multiple">Multiple Choice</option>
                       <option value="true-false">True/False</option>
                     </select>
@@ -306,7 +325,9 @@
                     <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46" />
                   </svg>
                   <select id="filterSelect" class="filter-select">
-                    <option value="">Filter by ...</option>
+                    <option value="" disabled selected hidden>
+                      Filter by ...
+                    </option>
                     <option value="all">All Quizzes</option>
                     <option value="high-score">High Score (80+)</option>
                     <option value="recent">Recently Created</option>
@@ -341,7 +362,7 @@
                   />
                   <polyline points="14,2 14,8 20,8" />
                 </svg>
-                <p>No quizzes found matching your search</p>
+                <p>No card found matching your search</p>
               </div>
             </div>
           </div>
