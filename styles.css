@@ -1,4 +1,7 @@
 /* Reset and Base Styles */
+/* Import quiz results styles */
+@import url('styles-results.css');
+
 * {
   margin: 0;
   padding: 0;
@@ -1320,3 +1323,4 @@ textarea:focus {
 .content {
   background: #fff;
 }
+

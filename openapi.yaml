@@ -1,0 +1,647 @@
+openapi: 3.1.0
+info:
+  title: Quiz Generation API
+  description: |
+    API for generating quizzes, managing tags, and providing AI-assisted answers.
+    This API allows users to create, update, and manage quiz content, as well as 
+    interact with an AI service for answering questions.
+  version: 1.0.0
+  contact:
+    name: API Support
+    url: https://github.com/rbunpat/CEDT-Final-Backend
+servers:
+  - url: http://localhost:5000
+    description: Local development server
+
+tags:
+  - name: Status
+    description: Endpoint for checking API status
+  - name: Quiz
+    description: Endpoints for managing quizzes
+  - name: Tag
+    description: Endpoints for managing tags
+  - name: Ask
+    description: Endpoints for AI question answering
+
+paths:
+  /status:
+    get:
+      summary: Get API status
+      description: Check if the backend service is running
+      tags:
+        - Status
+      responses:
+        '200':
+          description: Service is operational
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                    example: Backend service is running
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /quiz:
+    get:
+      summary: Get all quizzes
+      description: Retrieve a list of all available quizzes, optionally filtered by tags
+      tags:
+        - Quiz
+      parameters:
+        - name: tags
+          in: query
+          description: Comma-separated list of tags to filter quizzes
+          required: false
+          schema:
+            type: string
+            example: javascript,programming
+      responses:
+        '200':
+          description: List of quizzes retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuizSummary'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /quiz/{id}:
+    get:
+      summary: Get quiz by ID
+      description: Retrieve a specific quiz by its ID
+      tags:
+        - Quiz
+      parameters:
+        - name: id
+          in: path
+          description: ID of the quiz to retrieve
+          required: true
+          schema:
+            type: string
+            format: mongodb-id
+      responses:
+        '200':
+          description: Quiz retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete quiz by ID
+      description: Remove a specific quiz from the database
+      tags:
+        - Quiz
+      parameters:
+        - name: id
+          in: path
+          description: ID of the quiz to delete
+          required: true
+          schema:
+            type: string
+            format: mongodb-id
+      responses:
+        '200':
+          description: Quiz deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Quiz deleted successfully
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /quiz/update/{id}:
+    post:
+      summary: Update quiz by ID
+      description: |
+        Update an existing quiz's details. If regenerateQuiz is set to true, 
+        the quiz content will be recreated with the AI.
+      tags:
+        - Quiz
+      parameters:
+        - name: id
+          in: path
+          description: ID of the quiz to update
+          required: true
+          schema:
+            type: string
+            format: mongodb-id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: New quiz title
+                  example: JavaScript Fundamentals
+                description:
+                  type: string
+                  description: New description for the quiz
+                  example: Test your knowledge of JavaScript basics
+                duration:
+                  type: integer
+                  description: Duration of the quiz in minutes (0 means no time limit)
+                  example: 30
+                numQuestions:
+                  type: integer
+                  description: Number of questions in the quiz
+                  minimum: 1
+                  example: 10
+                questionType:
+                  type: string
+                  enum: [multiple-choice, true-false]
+                  description: Type of questions in the quiz
+                  example: multiple-choice
+                regenerateQuiz:
+                  type: boolean
+                  description: Whether to regenerate the quiz content with AI
+                  default: true
+                  example: true
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  description: List of tags for the quiz
+                  example: ["javascript", "programming", "web-dev"]
+      responses:
+        '200':
+          description: Quiz updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+        '400':
+          description: Bad request - Invalid quiz data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /quiz/submit/{id}:
+    post:
+      summary: Submit quiz answers
+      description: Submit user answers for a quiz and receive a score
+      tags:
+        - Quiz
+      parameters:
+        - name: id
+          in: path
+          description: ID of the quiz to submit answers for
+          required: true
+          schema:
+            type: string
+            format: mongodb-id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                answers:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - questionId
+                      - userAnswer
+                    properties:
+                      questionId:
+                        type: string
+                        description: ID of the question being answered
+                        example: 5f8d0c1cb17b9a36409d16e4
+                      userAnswer:
+                        type: string
+                        description: User's selected answer
+                        example: "A"
+              required:
+                - answers
+      responses:
+        '200':
+          description: Quiz answers submitted successfully with score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScoredQuiz'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /quiz/generate:
+    post:
+      summary: Generate a new quiz
+      description: Create a new quiz using AI generation based on the provided parameters
+      tags:
+        - Quiz
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - numQuestions
+                - questionType
+              properties:
+                title:
+                  type: string
+                  description: Title of the quiz
+                  example: JavaScript Fundamentals
+                description:
+                  type: string
+                  description: Topic and description for the quiz content
+                  example: Create a quiz about JavaScript variables, data types, and basic operations
+                duration:
+                  type: integer
+                  description: Duration of the quiz in minutes (0 means no time limit)
+                  default: 0
+                  example: 30
+                numQuestions:
+                  type: integer
+                  description: Number of questions to generate
+                  minimum: 1
+                  maximum: 50
+                  example: 10
+                questionType:
+                  type: string
+                  enum: [multiple-choice, true-false]
+                  description: Type of questions in the quiz
+                  example: multiple-choice
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  description: List of tags for categorizing the quiz
+                  example: ["javascript", "programming"]
+      responses:
+        '200':
+          description: Quiz generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneratedQuizContent'
+        '400':
+          description: Bad request - Invalid quiz parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /tag:
+    get:
+      summary: Get all tags
+      description: Retrieve a list of all available tags
+      tags:
+        - Tag
+      responses:
+        '200':
+          description: Tags retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /tag/create:
+    post:
+      summary: Create a new tag
+      description: Add a new tag to the system
+      tags:
+        - Tag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: Name of the tag
+                  example: javascript
+      responses:
+        '201':
+          description: Tag created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '400':
+          description: Tag with this name already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /tag/{id}:
+    delete:
+      summary: Delete a tag
+      description: Remove a tag from the system
+      tags:
+        - Tag
+      parameters:
+        - name: id
+          in: path
+          description: ID of the tag to delete
+          required: true
+          schema:
+            type: string
+            format: mongodb-id
+      responses:
+        '200':
+          description: Tag deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Tag deleted successfully
+        '404':
+          description: Tag not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /ask:
+    post:
+      summary: Get AI-generated answer
+      description: Ask a question and receive an AI-generated answer
+      tags:
+        - Ask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - question
+              properties:
+                question:
+                  type: string
+                  description: The question to ask the AI
+                  example: What is JavaScript and how is it used in web development?
+      responses:
+        '200':
+          description: Answer generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                    example: JavaScript is a high-level, interpreted programming language primarily used for creating interactive web pages...
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    QuizQuestion:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: mongodb-id
+          description: Unique ID of the question
+        question:
+          type: string
+          description: The question text
+          example: What is the result of '2' + 2 in JavaScript?
+        options:
+          type: array
+          description: Available answer options
+          items:
+            type: string
+          example: ["22", "4", "Error", "NaN"]
+        userAnswer:
+          type: string
+          description: The user's answer to this question
+          example: "A"
+        isAnswerCorrect:
+          type: boolean
+          description: Whether the user answered correctly
+          example: true
+
+    Quiz:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: mongodb-id
+          description: Unique ID of the quiz
+        title:
+          type: string
+          description: Title of the quiz
+          example: JavaScript Fundamentals
+        description:
+          type: string
+          description: Description of the quiz content
+          example: Test your knowledge of JavaScript basics
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizQuestion'
+        choiceType:
+          type: string
+          enum: [multiple-choice, true-false]
+          description: Type of questions in the quiz
+          example: multiple-choice
+        duration:
+          type: integer
+          description: Duration of the quiz in minutes (0 means no time limit)
+          example: 30
+        questionCount:
+          type: integer
+          description: Number of questions in the quiz
+          example: 10
+        tags:
+          type: array
+          items:
+            type: string
+          description: List of tags categorizing the quiz
+          example: ["javascript", "programming"]
+        score:
+          type: integer
+          description: User's score on the quiz
+          example: 8
+        createdAt:
+          type: string
+          format: date-time
+          description: When the quiz was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the quiz was last updated
+
+    QuizSummary:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: mongodb-id
+          description: Unique ID of the quiz
+        title:
+          type: string
+          description: Title of the quiz
+          example: JavaScript Fundamentals
+        description:
+          type: string
+          description: Description of the quiz content
+          example: Test your knowledge of JavaScript basics
+        choiceType:
+          type: string
+          enum: [multiple-choice, true-false]
+          description: Type of questions in the quiz
+          example: multiple-choice
+        duration:
+          type: integer
+          description: Duration of the quiz in minutes (0 means no time limit)
+          example: 30
+        questionCount:
+          type: integer
+          description: Number of questions in the quiz
+          example: 10
+        tags:
+          type: array
+          items:
+            type: string
+          description: List of tags categorizing the quiz
+          example: ["javascript", "programming"]
+        createdAt:
+          type: string
+          format: date-time
+          description: When the quiz was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the quiz was last updated
+
+    ScoredQuiz:
+      allOf:
+        - $ref: '#/components/schemas/Quiz'
+        - type: object
+          properties:
+            score:
+              type: integer
+              description: User's score on the quiz
+              example: 8
+
+    GeneratedQuizContent:
+      type: object
+      properties:
+        questions:
+          type: array
+          items:
+            type: object
+            properties:
+              question:
+                type: string
+                description: The question text
+                example: What is the result of '2' + 2 in JavaScript?
+              options:
+                type: array
+                description: Available answer options
+                items:
+                  type: string
+                example: ["22", "4", "Error", "NaN"]
+              answer:
+                type: string
+                description: The correct answer (not shown to users)
+                example: "A"
+
+    Tag:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: mongodb-id
+          description: Unique ID of the tag
+        name:
+          type: string
+          description: Name of the tag
+          example: javascript
+        createdAt:
+          type: string
+          format: date-time
+          description: When the tag was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the tag was last updated
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: Internal Server Error
+
+  responses:
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
