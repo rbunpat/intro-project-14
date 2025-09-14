@@ -206,7 +206,7 @@
                       <option value="" disabled selected hidden>
                         Select type
                       </option>
-                      <option value="multiple">Multiple Choice</option>
+                      <option value="multiple-choice">Multiple Choice</option>
                       <option value="true-false">True/False</option>
                     </select>
                   </div>
@@ -489,54 +489,252 @@
           <div id="quiz-edit-content" class="page-content">
             <div class="quiz-creator">
               <div class="quiz-header">
-                <h2>Edit Quiz</h2>
+                <div class="input-icon">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                  <input
+                    type="text"
+                    id="editQuizName"
+                    placeholder="Enter quiz name"
+                    class="quiz-name-input"
+                  />
+                </div>
+
+                <!-- Quick Settings Row -->
+                <div class="quick-settings">
+                  <div class="setting-group">
+                    <label>
+                      <svg
+                        class="setting-icon"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12,6 12,12 16,14" />
+                      </svg>
+                      Quiz Duration
+                    </label>
+                    <select id="editDuration" class="select-input">
+                      <option value="" disabled selected hidden>
+                        Select duration
+                      </option>
+                      <option value="5">5 minutes</option>
+                      <option value="10">10 minutes</option>
+                      <option value="15">15 minutes</option>
+                      <option value="30">30 minutes</option>
+                      <option value="60">60 minutes</option>
+                      <option value="unlimited">Unlimited</option>
+                    </select>
+                  </div>
+
+                  <div class="setting-group">
+                    <label>
+                      <svg
+                        class="setting-icon"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <line x1="4" x2="4" y1="21" y2="14" />
+                        <line x1="4" x2="4" y1="10" y2="3" />
+                        <line x1="12" x2="12" y1="21" y2="12" />
+                        <line x1="12" x2="12" y1="8" y2="3" />
+                        <line x1="20" x2="20" y1="21" y2="16" />
+                        <line x1="20" x2="20" y1="12" y2="3" />
+                      </svg>
+                      Questions
+                    </label>
+                    <select id="editTotalQuestions" class="select-input">
+                      <option value="" disabled selected hidden>
+                        Select number
+                      </option>
+                      <option value="5">5 questions</option>
+                      <option value="10">10 questions</option>
+                      <option value="15">15 questions</option>
+                      <option value="20">20 questions</option>
+                      <option value="25">25 questions</option>
+                      <option value="50">50 questions</option>
+                    </select>
+                  </div>
+
+                  <div class="setting-group">
+                    <label>
+                      <svg
+                        class="setting-icon"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <line x1="8" x2="21" y1="6" y2="6" />
+                        <line x1="8" x2="21" y1="12" y2="12" />
+                        <line x1="8" x2="21" y1="18" y2="18" />
+                        <line x1="3" x2="3.01" y1="6" y2="6" />
+                        <line x1="3" x2="3.01" y1="12" y2="12" />
+                        <line x1="3" x2="3.01" y1="18" y2="18" />
+                      </svg>
+                      Choice Type
+                    </label>
+                    <select id="editChoiceType" class="select-input">
+                      <option value="" disabled selected hidden>
+                        Select type
+                      </option>
+                      <option value="multiple-choice">Multiple Choice</option>
+                      <option value="true-false">True/False</option>
+                    </select>
+                  </div>
+                </div>
               </div>
+
+              <!-- Main Content Area -->
               <div class="creator-content">
+                <!-- Quiz Configuration Card -->
                 <div class="config-card">
                   <div class="card-header">
-                    <h3>Edit Quiz Details</h3>
+                    <svg
+                      class="card-icon"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <circle cx="12" cy="12" r="3" />
+                      <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+                      />
+                    </svg>
+                    <h3>Quiz Configuration</h3>
                   </div>
                   <div class="card-content">
                     <div class="form-group">
-                      <label for="editQuizName">Quiz Name</label>
-                      <input id="editQuizName" type="text" class="tag-input" />
+                      <label for="editQuizDescription">Quiz Details</label>
+                      <textarea
+                        id="editQuizDescription"
+                        placeholder="Enter quiz description and instructions"
+                        rows="4"
+                      ></textarea>
                     </div>
+
                     <div class="form-group">
-                      <label for="editDuration">Duration (minutes)</label>
-                      <input
-                        id="editDuration"
-                        type="number"
-                        class="tag-input"
-                      />
-                    </div>
-                    <div class="form-group">
-                      <label for="editTotalQuestions">Total Questions</label>
-                      <input
-                        id="editTotalQuestions"
-                        type="number"
-                        class="tag-input"
-                      />
-                    </div>
-                    <div class="form-group">
-                      <label for="editChoiceType">Choice Type</label>
-                      <select id="editChoiceType" class="select-input">
-                        <option value="Multiple Choice">Multiple Choice</option>
-                        <!-- <option value="Short Answer">Short Answer</option>
-                        <option value="Essay">Essay</option> -->
-                        <option value="True/False">True/False</option>
-                      </select>
-                    </div>
-                    <div class="navigation-buttons">
-                      <button id="cancelEditBtn" class="btn-outline">
-                        Cancel
-                      </button>
-                      <div class="nav-right">
-                        <button id="saveEditBtn" class="btn-success">
-                          Save Changes
+                      <label>Tags</label>
+                      <div class="tags-container" id="editTagsContainer">
+                        <!-- Tags will be populated by JavaScript -->
+                      </div>
+                      <div class="tag-input-row">
+                        <input
+                          type="text"
+                          id="editNewTag"
+                          placeholder="Add custom tag"
+                          class="tag-input"
+                        />
+                        <button
+                          type="button"
+                          id="editAddTagBtn"
+                          class="add-tag-btn"
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          >
+                            <path d="M5 12h14" />
+                            <path d="M12 5v14" />
+                          </svg>
                         </button>
                       </div>
                     </div>
+                    
+                    <div class="form-group">
+                      <label for="regenerateQuiz">
+                        <input type="checkbox" id="regenerateQuiz" />
+                        Regenerate quiz questions with these new settings
+                      </label>
+                    </div>
                   </div>
+                </div>
+              </div>
+
+              <!-- Create Button -->
+              <div class="creator-footer">
+                <button id="cancelEditBtn" class="btn-outline">
+                  Cancel
+                </button>
+                <button type="button" id="saveEditBtn" class="btn-primary">
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quiz Results Page -->
+          <div id="quiz-results-content" class="page-content">
+            <div class="quiz-results-container">
+              <div class="quiz-header-section">
+                <button id="backToCardsFromResultsBtn" class="back-btn">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                </button>
+                <div class="quiz-info">
+                  <h1 id="resultsQuizTitle">Quiz Results</h1>
+                  <div class="quiz-meta">
+                    <div class="meta-item">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                      </svg>
+                      <span id="resultsQuizScore">Score: 0/0</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="results-summary">
+                <div class="results-score-card">
+                  <div class="score-percentage" id="scorePercentage">0%</div>
+                  <div class="score-label">Correct</div>
+                </div>
+              </div>
+
+              <div class="results-questions-container" id="resultsQuestionsContainer">
+                <!-- Questions with answers will be populated here -->
+              </div>
+              
+              <div class="navigation-buttons">
+                <button id="retryQuizBtn" class="btn-outline">
+                  Try Again
+                </button>
+                <div class="nav-right">
+                  <button id="backToCardsBtn2" class="btn-primary">
+                    Back to Cards
+                  </button>
                 </div>
               </div>
             </div>
@@ -574,6 +772,8 @@
       </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js" type="module"></script>
+    <script src="config.js" type="module"></script>
+    <script src="api.js" type="module"></script>
   </body>
 </html>
