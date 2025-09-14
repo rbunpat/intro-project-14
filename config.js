@@ -1,2 +1,2 @@
-const apiUrl = "http://localhost:3000";
+const apiUrl = "https://cedt-backend-dev.rachatat.com";
 export { apiUrl };
