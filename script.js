@@ -1,5 +1,6 @@
 import { apiUrl } from './config.js';
 import { getQuizCards, createQuizApi, getQuizById, deleteQuizById, getTags, createTag, deleteTag, sendAskRequest, updateQuizById } from './api.js';
+
 // Application State
 let currentTab = 'home';
 let currentQuizId = null;
@@ -8,23 +9,17 @@ let timeRemaining = 0;
 let timer = null;
 let userAnswers = {};
 let selectedAnswer = '';
+let editMode = false;
 
-// Sample data
+// Data Storage
 let availableTags = [];
 let selectedTags = [];
-
-// const apiUrl = "https://cedt-backend-dev.rachatat.com";
-// const apiUrl = "http://localhost:3000"; 
-
 let quizCards = [];
-
 let quizData = [];
-
 let answerData;
-
 let currentQuiz;
 
-// DOM Ready
+// ===== Application Initialization =====
 document.addEventListener('DOMContentLoaded', function () {
     // Call the async function without await since we're in a callback
     initializeApp().catch(error => {
@@ -32,85 +27,41 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// async function getQuizCards() {
-//     let data = await fetch(`${apiUrl}/quiz`);
-//     return data.json();
-// }
-
-// async function createQuizApi(payload) {
-//     try {
-//         const res = await fetch(`${apiUrl}/quiz/generate`, {
-//             method: "POST",
-//             headers: { "Content-Type": "application/json" },
-//             body: JSON.stringify(payload),
-//         });
-
-//         const data = await res.json();
-//         if (!res.ok) throw new Error(data?.error || res.statusText);
-
-//         //console.log("Quiz created:", data);
-//         alert("Quiz created successfully!");
-//         //document.getElementById("quizForm")?.reset?.();
-//     } catch (err) {
-//         console.error("Error creating quiz:", err);
-//         alert("สร้างควิซไม่สำเร็จ: " + err.message);
-//     }
-// };
-
-// async function getQuizById(id) {
-//     let data = await fetch(`${apiUrl}/quiz/${id}`);
-//     return data.json();
-// }
-
-// async function deleteQuizById(id) {
-//     let data = await fetch(`${apiUrl}/quiz/${id}`, {
-//         method: 'DELETE'
-//     });
-//     return data.json();
-// }
-
-// async function getTags() {
-//     let data = await fetch(`${apiUrl}/tag`);
-//     return data.json();
-// }
-
-// async function createTag(tag) {
-//     let data = await fetch(`${apiUrl}/tag/create`, {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ name: tag })
-//     });
-//     return data.json();
-// }
-
-// async function deleteTag(id) {
-//     let data = await fetch(`${apiUrl}/tag/${id}`, {
-//         method: 'DELETE',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ id })
-//     });
-//     return data.json();
-// }
 
 
-
+/**
+ * Initialize the application
+ * Sets up event listeners, loads tags and quiz cards, and restores previous state if available
+ */
 async function initializeApp() {
-    setupEventListeners();
-    initializeTags();
-    await renderQuizCards();
-    initAsksChat();
+    try {
+        // Setup event handlers for all interactive elements
+        setupEventListeners();
+        
+        // Initialize tag selection UI
+        initializeTags();
+        
+        // Fetch and render quiz cards
+        await renderQuizCards();
+        
+        // Initialize chat functionality
+        initAsksChat();
 
-    // Check if we have a saved quiz state and restore it
-    const hasQuizState = await loadQuizState();
-    
-    // If there's no quiz state, use the saved tab or default
-    if (!hasQuizState) {
-        const savedTab = localStorage.getItem("currentTab");
-        if (savedTab) {
-            switchTab(savedTab);
-        } else {
-            showPage('home'); // default
+        // Check if we have a saved quiz state (in-progress quiz) and restore it
+        const hasQuizState = await loadQuizState();
+        
+        // If there's no quiz in progress, restore the last active tab or default to home
+        if (!hasQuizState) {
+            const savedTab = localStorage.getItem("currentTab");
+            if (savedTab) {
+                switchTab(savedTab);
+            } else {
+                showPage('home'); // default
+            }
         }
+    } catch (error) {
+        console.error("Error during app initialization:", error);
+        alert("There was a problem initializing the application. Please refresh the page.");
     }
 }
 
@@ -118,38 +69,51 @@ async function handleCreateQuizClick() {
     const title = document.getElementById("quizName")?.value?.trim();
     const description = document.getElementById("quizDetails")?.value?.trim();
     const numQuestions = parseInt(document.getElementById("numQuestions")?.value, 10);
-    const questionType = document.getElementById("choiceType")?.value; // "multiple" หรือ "true-false"
+    const questionType = document.getElementById("choiceType")?.value; // "multiple" or "true-false"
     let duration = document.getElementById("duration")?.value;
 
-    //disable Create Quiz button
+    // Disable Create Quiz button
     const createBtn = document.getElementById("createQuizBtn");
     if (createBtn) {
         createBtn.disabled = true;
         createBtn.textContent = "Creating...";
     }
 
-    if (typeof editMode !== "undefined" && editMode && currentQuizId) {
-        return createQuiz();
+    try {
+        // Handle edit mode
+        if (editMode && currentQuizId) {
+            return createQuiz();
+        }
+
+        // Validate form fields
+        if (!title || !description || !numQuestions || !questionType || !duration) {
+            alert("Please fill in all fields: Topic name, number of questions, and question type");
+            return;
+        }
+
+        // Handle unlimited duration
+        if (duration === "unlimited") {
+            duration = 0;
+        }
+
+        // Create the quiz through API
+        await createQuizApi({ title, description, numQuestions, questionType, duration });
+        
+        // Navigate to cards view and refresh
+        switchTab('cards');
+        await renderQuizCards();
+    } catch (error) {
+        console.error("Error creating quiz:", error);
+        alert("Failed to create quiz: " + error.message);
+    } finally {
+        if (createBtn) {
+            createBtn.disabled = false;
+            createBtn.textContent = "Create Quiz";
+        }
     }
-
-
-    if (!title || !description || !numQuestions || !questionType || !duration) {
-        alert("กรอกให้ครบ: ชื่อหัวข้อ/จำนวนข้อ/ประเภทคำถาม");
-        return;
-    }
-
-    if (duration === "unlimited") {
-        duration = 0
-    }
-
-
-    await createQuizApi({ title, description, numQuestions, questionType, duration });
-    createBtn.disabled = false;
-    switchTab('cards');
-    //refresh quizzes
-    renderQuizCards();
 }
 
+// ===== Event Listeners Setup =====
 function setupEventListeners() {
     // Navigation
     document.querySelectorAll('.nav-item').forEach(item => {
@@ -314,24 +278,24 @@ function scrollToBottom() {
     const msgs = document.getElementById('chatMessages');
     if (!msgs) return;
 
-    // ถ้า #chatMessages เป็น scrollable container ให้เลื่อนอันนี้
+    // If #chatMessages is a scrollable container, scroll it
     const style = window.getComputedStyle(msgs);
     const isScrollable = style.overflowY === 'auto' || style.overflowY === 'scroll' || msgs.scrollHeight > msgs.clientHeight;
 
     if (isScrollable) {
-        // ให้เกิดการเลื่อนหลังจาก layout เสร็จ (more reliable)
+        // Schedule scrolling after layout is complete (more reliable)
         requestAnimationFrame(() => {
             msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' });
         });
         return;
     }
 
-    // Fallback: ถ้า container ไม่ scroll ให้เลื่อน message ตัวสุดท้าย ให้แน่ใจว่า visible
+    // Fallback: If container isn't scrollable, scroll the last message into view
     const last = msgs.lastElementChild;
     if (last) {
         last.scrollIntoView({ behavior: 'smooth', block: 'end' });
     } else {
-        // สุดท้ายก็เลื่อนหน้าเว็บทั้งหน้า
+        // Finally, fall back to scrolling the entire page
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
 }
@@ -355,7 +319,7 @@ function appendMessage(role, text) {
     wrap.appendChild(bubble);
     msgs.appendChild(wrap);
 
-    // เรียก scroll แบบปลอดภัย
+    // Call scroll safely to ensure visibility
     scrollToBottom();
 }
 
@@ -372,14 +336,14 @@ function showTyping() {
   `;
     msgs.appendChild(typingEl);
 
-    // เลื่อนให้เห็น typing
+    // Scroll to make typing indicator visible
     scrollToBottom();
 }
 function hideTyping() {
     if (typingEl && typingEl.parentNode) {
         typingEl.parentNode.removeChild(typingEl);
         typingEl = null;
-        // หลังจากลบแล้วอาจต้องเลื่อนให้ข้อความก่อนหน้า visible
+        // After removing, we may need to scroll to make previous messages visible
         requestAnimationFrame(scrollToBottom);
     }
 }
@@ -395,9 +359,6 @@ async function sendToBackend(userText) {
     }
 }
 
-
-let editMode = false;
-
 function mapChoiceToHomeSelect(type) {
     if (type === 'Multiple Choice') return 'multiple';
     if (type === 'True/False') return 'true-false';
@@ -410,7 +371,12 @@ function mapHomeSelectToChoice(val) {
     return '';
 }
 
-
+// ===== Navigation Functions =====
+/**
+ * Switches between different application views/tabs
+ * Updates navigation, page title, and saves state to localStorage
+ * @param {string} tab - The tab to switch to ('home', 'cards', 'asks', etc.)
+ */
 function switchTab(tab) {
     // If leaving the quiz-taking page, clear quiz state
     if (currentTab === 'quiz-taking' && tab !== 'quiz-taking') {
@@ -466,7 +432,7 @@ function showPage(page) {
     }
 }
 
-// Quiz Creator Functions
+// ===== Tag Management Functions =====
 function initializeTags() {
     const container = document.getElementById('tagsContainer');
     if (!container) return;
@@ -529,14 +495,14 @@ function createTagElement(tagText, tagId) {
         <button class="tag-remove" title="Remove tag">&times;</button>
     `;
 
-    // toggle การเลือกแท็ก (เวลา click ที่ตัวหนังสือแท็ก)
+    // Toggle tag selection when clicking the tag text
     tag.querySelector('.tag-text').addEventListener('click', function () {
         toggleTag(tagText);
     });
 
-    // ปุ่มลบ
+    // Remove button handler
     tag.querySelector('.tag-remove').addEventListener('click', function (e) {
-        e.stopPropagation(); // กันไม่ให้ trigger toggle
+        e.stopPropagation(); // Prevent triggering parent element's click event
         // Call API to delete tag
         deleteTag(tagId).then(res => {
             if (res.success) {
@@ -609,20 +575,6 @@ function toggleEditTag(tagText) {
 }
 
 function toggleTag(tagText) {
-    // const index = selectedTags.indexOf(tagText);
-    // if (index > -1) {
-    //     selectedTags.splice(index, 1);
-    // } else {
-    //     selectedTags.push(tagText);
-    // }
-
-    // // Update visual state
-    // const tagElements = document.querySelectorAll('.tag');
-    // tagElements.forEach(tag => {
-    //     if (tag.textContent === tagText) {
-    //         tag.classList.toggle('selected');
-    //     }
-    // });
     const index = selectedTags.indexOf(tagText);
     if (index > -1) {
         selectedTags.splice(index, 1);
@@ -675,6 +627,7 @@ async function addEditTag() {
     }
 }
 
+// ===== Quiz Creation Functions =====
 function createQuiz() {
     const quizName = document.getElementById('quizName').value;
     const quizDetails = document.getElementById('quizDetails').value;
@@ -687,12 +640,12 @@ function createQuiz() {
         return;
     }
 
-    // ถ้ามาจากการกด Edit บนการ์ด -> Regenerate (อัปเดตการ์ดเดิมด้วยค่าจากหน้า Home)
+    // Handling edit mode (regenerate quiz with updated values from Home tab)
     if (editMode && currentQuizId) {
         const q = quizData[currentQuizId];
         if (q) {
             q.name = quizName || q.name;
-            // duration ในหน้า Home เป็นนาทีหรือ 'unlimited' (หากเป็น unlimited จะคงค่าเดิมไว้)
+            // Duration can be minutes or 'unlimited'
             if (duration && duration !== 'unlimited') {
                 const d = parseInt(duration, 10);
                 if (!Number.isNaN(d)) q.duration = d;
@@ -719,18 +672,18 @@ function createQuiz() {
         alert('Regenerated quiz from Home settings!');
         renderQuizCards();
 
-        // รีเซ็ตสถานะโหมด Regenerate
+        // Reset regenerate mode state
         editMode = false;
         currentQuizId = null;
         const createBtn = document.getElementById('createQuizBtn');
         if (createBtn) createBtn.textContent = 'Create Quiz';
 
-        // กลับไปหน้า Cards
+        // Navigate back to Cards
         switchTab('cards');
         return;
     }
 
-    // โหมดสร้างใหม่ (พฤติกรรมเดิม)
+    // New quiz creation mode
     console.log('Creating quiz:', {
         name: quizName,
         details: quizDetails,
@@ -742,7 +695,7 @@ function createQuiz() {
 
     alert('Quiz created successfully!');
 
-    // Reset form (พฤติกรรมเดิม)
+    // Reset form
     document.getElementById('quizName').value = '';
     document.getElementById('quizDetails').value = '';
     document.getElementById('duration').value = '';
@@ -752,7 +705,7 @@ function createQuiz() {
     initializeTags();
 }
 
-// Cards Folder Functions
+// ===== Quiz Card Management =====
 async function renderQuizCards() {
     const container = document.getElementById('quizCardsContainer');
     if (!container) return;
@@ -974,7 +927,12 @@ function filterQuizCards() {
     }
 }
 
-// Quiz Taking Functions
+// ===== Quiz Taking Functions =====
+/**
+ * Starts a quiz with the given ID
+ * Loads quiz data, initializes state, and switches to quiz-taking view
+ * @param {string} quizId - The ID of the quiz to start
+ */
 async function startQuiz(quizId) {
     currentQuizId = quizId;
     currentQuestionIndex = 0;
@@ -1087,47 +1045,6 @@ function displayQuestion() {
         submitBtn.style.display = 'block';
     }
 }
-    //else if (question.type === 'short-answer') {
-    //     const input = document.createElement('input');
-    //     input.type = 'text';
-    //     input.className = 'answer-input';
-    //     input.placeholder = 'Enter your answer...';
-    //     input.value = selectedAnswer;
-
-    //     input.addEventListener('input', function () {
-    //         selectAnswer(this.value);
-    //     });
-
-    //     container.appendChild(input);
-    // } else if (question.type === 'essay') {
-    //     const textarea = document.createElement('textarea');
-    //     textarea.className = 'answer-textarea';
-    //     textarea.placeholder = 'Write your essay answer here...';
-    //     textarea.rows = 8;
-    //     textarea.value = selectedAnswer;
-
-    //     textarea.addEventListener('input', function () {
-    //         selectAnswer(this.value);
-    //     });
-
-    //     container.appendChild(textarea);
-    // }
-
-    // Update navigation buttons
-//     const prevBtn = document.getElementById('prevBtn');
-//     const nextBtn = document.getElementById('nextBtn');
-//     const submitBtn = document.getElementById('submitBtn');
-
-//     if (prevBtn) prevBtn.disabled = currentQuestionIndex === 0;
-
-//     if (currentQuestionIndex < quiz.questions.length - 1) {
-//         nextBtn.style.display = 'block';
-//         submitBtn.style.display = 'none';
-//     } else {
-//         nextBtn.style.display = 'none';
-//         submitBtn.style.display = 'block';
-//     }
-// }
 
 function selectAnswer(quizId, questionId, answer) {
     // Store answer in the userAnswers object
@@ -1355,6 +1272,11 @@ function processQuizResult(quiz, userAnswers, apiResult) {
     return processedResult;
 }
 
+// ===== Quiz Navigation and Results =====
+/**
+ * Returns to the quiz cards view, clearing current quiz state
+ * Called when exiting a quiz or after submission
+ */
 function backToCards() {
     if (timer) {
         clearInterval(timer);
@@ -1372,6 +1294,12 @@ function backToCards() {
     switchTab('cards');
 }
 
+/**
+ * Displays quiz results after submission
+ * Shows score, correct/incorrect answers, and navigation buttons
+ * @param {Object} quiz - The quiz object containing questions and metadata
+ * @param {Object} result - The quiz result containing score and question results
+ */
 function displayQuizResults(quiz, result) {
     // Set the quiz title in the results page
     document.getElementById('resultsQuizTitle').textContent = quiz.title;
@@ -1503,6 +1431,7 @@ function displayQuizResults(quiz, result) {
     switchTab('quiz-results');
 }
 
+// ===== Timer Functions =====
 function startTimer() {
     if (timer) {
         clearInterval(timer);
@@ -1541,7 +1470,7 @@ function formatTime(seconds) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
-// ---- Edit Flow ----
+// ===== Quiz Editing Functions =====
 function editViaHome(quizId) {
     currentQuizId = quizId;
     editMode = true;
@@ -1762,35 +1691,10 @@ async function saveQuizEdits() {
     }
 }
 
-// async function createQuiz(payload) {
-//     try {
-//         const res = await fetch("http://localhost:5000/quiz/generate", {
-//             method: "POST",
-//             headers: {
-//                 "Content-Type": "application/json",
-//             },
-//             body: JSON.stringify(payload),
-//         });
-
-//         const data = await res.json();
-//         console.log("Quiz created:", data);
-//         alert("Quiz created successfully!");
-//     } catch (error) {
-//         console.error("Error creating quiz:", error);
-//         alert("Failed to create quiz");
-//     }
-// }
-
-// document.getElementById("createQuizBtn")?.addEventListener("click", () => {
-//     const topic = document.getElementById("quizName").value.trim();
-//     const numQuestions = parseInt(document.getElementById("numQuestions").value, 10);
-//     const questionType = document.getElementById("choiceType").value;
-
-//     if (!topic || !numQuestions || !questionType) {
-//         alert("กรอกให้ครบ: ชื่อหัวข้อ/จำนวนข้อ/ประเภทคำถาม");
-//         return;
-//     }
-
-
-//     // createQuizApi({ topic, numQuestions, questionType });
-// });
+// Export functions that need to be used externally
+export {
+    initializeApp,
+    switchTab,
+    startQuiz,
+    backToCards
+};
