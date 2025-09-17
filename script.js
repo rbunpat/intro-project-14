@@ -1338,10 +1338,10 @@ function displayQuizResults(quiz, result) {
         const questionContent = document.createElement('div');
         questionContent.className = 'result-question-content';
         
-        // Question text
+        // Question text - using innerHTML to properly parse escaped characters
         const questionText = document.createElement('div');
         questionText.className = 'result-question-text';
-        questionText.textContent = question.question;
+        questionText.innerHTML = question.question; // Changed from textContent to innerHTML
         
         // Answers container
         const answersContainer = document.createElement('div');
@@ -1364,7 +1364,7 @@ function displayQuizResults(quiz, result) {
             
             // Answer text
             const textSpan = document.createElement('span');
-            textSpan.textContent = option;
+            textSpan.innerHTML = option; // Changed from textContent to innerHTML to properly parse escaped characters
             
             // Icon for correct/incorrect
             const iconSpan = document.createElement('span');
